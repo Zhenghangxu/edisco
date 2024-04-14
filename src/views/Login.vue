@@ -6,6 +6,8 @@ import { ref } from 'vue'
 
 const email = ref('')
 const password = ref('')
+const inputStyle = 'p-2'
+
 defineProps<{
   email: string
 }>()
@@ -13,12 +15,18 @@ defineProps<{
 
 <template>
   <div class="header">HEADER Lite placeholder</div>
-  <div class="container">
+  <div class="container mx-auto">
     <form action="">
-      <InputText type="text" v-model="email" placeholder="StudentID/Email" />
-      <Password v-model="password" :feedback="false" />
+      <div class="flex flex-col gap-3">
+        <InputText type="text" v-model="email" placeholder="StudentID/Email" :class="inputStyle" />
+        <Password v-model="password" :feedback="false" placeholder="password" />
+      </div>
     </form>
   </div>
 </template>
 
-<style lang="sass" scoped></style>
+<style scoped>
+:deep(input[type='password']) {
+  @apply p-2;
+}
+</style>
