@@ -1,23 +1,23 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { within, userEvent, expect } from '@storybook/test'
-import Login from '../../views/LoginPage.vue'
+import Layout from '../../views/LayoutPage.vue'
 
 const meta = {
-  title: 'Example/Page',
-  component: Login,
-  render: () => ({
-    components: { MyPage: Login },
-    template: '<my-page />'
-  }),
+  title: 'Layout/Basic Page',
+  component: Layout,
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen'
   },
   // This component will have an automatically generated docsPage entry: https://storybook.js.org/docs/writing-docs/autodocs
-  tags: ['autodocs']
-} satisfies Meta<typeof Login>
+} satisfies Meta<typeof Layout>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const LoggedIn: Story = {}
+export const PageTemplate: Story = {
+    args:{
+        type: "full",
+        internalLayout: "vertical",
+        gap: "1",
+    }
+}

@@ -4,7 +4,7 @@ import Password from 'primevue/password'
 
 import { ref } from 'vue'
 
-const email = ref('')
+const loginEmail = ref('')
 const password = ref('')
 const inputStyle = 'p-2'
 
@@ -18,7 +18,7 @@ defineProps<{
   <div class="container mx-auto">
     <form action="">
       <div class="flex flex-col gap-3">
-        <InputText type="text" v-model="email" placeholder="StudentID/Email" :class="inputStyle" />
+        <InputText type="text" v-model="loginEmail" placeholder="StudentID/Email" :class="inputStyle" />
         <Password v-model="password" :feedback="false" placeholder="password" />
       </div>
     </form>
