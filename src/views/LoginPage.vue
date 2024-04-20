@@ -15,10 +15,15 @@ defineProps<{
 
 <template>
   <div class="header">HEADER Lite placeholder</div>
-  <div class="container mx-auto">
+  <div class="">
     <form action="">
       <div class="flex flex-col gap-3">
-        <InputText type="text" v-model="loginEmail" placeholder="StudentID/Email" :class="inputStyle" />
+        <InputText
+          type="text"
+          v-model="loginEmail"
+          placeholder="StudentID/Email"
+          :class="inputStyle"
+        />
         <Password v-model="password" :feedback="false" placeholder="password" />
       </div>
     </form>
