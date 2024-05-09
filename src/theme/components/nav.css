@@ -1,0 +1,12 @@
+.splash-lite .header h2 {
+  font-family: Roboto;
+  font-weight: 600;
+  margin-top: 0px;
+  /* line-height: 78.52px; */
+  /* display: inline-block; */
+  max-width: 370px;
+}
+.main-nav .brand-logo-lite {
+  width: var(--nav-logo-width);
+  height: auto;
+}

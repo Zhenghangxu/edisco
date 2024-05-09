@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import LoginPage from './LoginPage.vue'
-const props = defineProps<{
-  type: 'full' | 'side' | 'contained' | 'contentWithSideBar' | 'half' | 'third'
-  internalLayout: 'vertical' | 'horizontal'
-  gap: string
-  padding: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    type?: 'full' | 'side' | 'contained' | 'contentWithSideBar' | 'half' | 'third'
+    internalLayout?: 'vertical' | 'horizontal'
+    gap?: string
+    padding?: string
+    className?: string
+  }>(),
+  {
+    type: 'full',
+    internalLayout: 'vertical',
+    gap: '0',
+    padding: '0',
+    className: ''
+  }
+)
 
 const widthClasses = {
   full: 'w-full',
@@ -23,15 +32,20 @@ const layoutClasses = {
 }
 
 const gapClass = {
+  '0': 'gap-0',
   '1': 'gap-1',
   '2': 'gap-2',
   '3': 'gap-3',
   '4': 'gap-4',
   '5': 'gap-5',
-  '6': 'gap-6'
+  '6': 'gap-6',
+  '7': 'gap-7',
+  '8': 'gap-8',
+  '9': 'gap-9'
 }
 
 const paddingClass = {
+  '0': 'p-0',
   '1': 'p-1',
   '2': 'p-2',
   '3': 'p-3',
@@ -41,13 +55,13 @@ const paddingClass = {
 }
 
 const classes = computed(() => {
-  return `${'d-flex'} ${paddingClass[props.padding as keyof typeof paddingClass]} ${layoutClasses[props.internalLayout]} ${gapClass[props.gap as keyof typeof gapClass]} ${widthClasses[props.type]}`
+  return `${'d-flex'} ${paddingClass[props.padding as keyof typeof paddingClass]} ${layoutClasses[props.internalLayout]} ${gapClass[props.gap as keyof typeof gapClass]} ${widthClasses[props.type]} ${props.className}`
 })
 </script>
 
 <template>
   <div :class="classes">
-    <LoginPage email="jason.xu@nrg.com" />
+    <slot></slot>
   </div>
 </template>
 
