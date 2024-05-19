@@ -1,0 +1,29 @@
+.interest-select{
+    display: grid;
+    /* 4 col 5 rows, gap-2 */
+    grid-template-columns: repeat(4, 1fr);
+    @apply gap-6;
+}
+.interest-select-button {
+    @apply !rounded-md border-r-slate-300;
+    border-right-width: 1px;
+    border-right-style: solid;
+    box-shadow: none;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.interest-select-button[aria-checked="true"] {
+    @apply text-white;
+    /* box-shadow: none; */
+    box-shadow: var(--primary-color) 0px 0px 0px 2px;
+    border:none;
+    @apply bg-transparent text-primary;
+
+}
+
+.interest-select-button[aria-checked="false"] {
+    box-shadow: transparent 0px 0px 0px 2px;
+    @apply bg-transparent text-gray-900 text-slate-400;
+}

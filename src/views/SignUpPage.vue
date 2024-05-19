@@ -7,13 +7,16 @@ import Divider from 'primevue/divider'
 import NavLite from '@/components/NavLite.vue'
 import { ref } from 'vue'
 import BasicPage from './BasicPage.vue'
+import InputOtp from 'primevue/inputotp'
 
-const loginEmail = ref('')
+const signUpEmail = ref('')
 const password = ref('')
+const rfCode = ref('')
 const inputStyle = ''
 
 defineProps<{
   email: string
+  referralCode: string
 }>()
 </script>
 
@@ -44,13 +47,25 @@ defineProps<{
             padding="0"
             className="max-w-[420px]"
           >
-            <InputText type="text" v-model="loginEmail" name="email" placeholder="Email" :class="inputStyle" />
-            <Password v-model="password" :feedback="false" name="password" placeholder="Password" toggleMask />
-            <Button label="Log In" type="submit" severity="primary"></Button>
-            <Divider align="center" class="m-0">
-              <span>Don't Have An Account?</span>
-            </Divider>
-            <Button label="Sign Up" severity="secondary"></Button>
+            <InputText
+              type="text"
+              v-model="signUpEmail"
+              placeholder="Email"
+              name="email"
+              :class="inputStyle"
+            />
+            <Password v-model="password" placeholder="Password" name="password" toggleMask />
+            <div class="flex flex-row max-w-full gap-4 justify-center items-center">
+              <span class="font-sans text-base text-slate-700">Referral Code</span>
+              <InputOtp
+                v-model="rfCode"
+                placeholder="Referral Code"
+                :length="5"
+                name="referralCode"
+                :pt="{ input: { root: { style: { 'text-transform': 'uppercase' } } } }"
+              />
+            </div>
+            <Button label="Sign Up" type="submit" severity="primary"></Button>
           </LayoutPage>
         </form>
       </LayoutPage>
@@ -59,3 +74,5 @@ defineProps<{
 </template>
 
 <style scoped></style>
+
+<!-- :ptOptions="{autocomplete:'one-time-code'}" -->

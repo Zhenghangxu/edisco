@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { within, userEvent, expect } from '@storybook/test'
-import Login from '../../views/LoginPage.vue'
+import SelectInterestPage from '../../views/SelectInterest.vue'
 
 const meta = {
   title: 'Pages/Login',
-  component: Login,
+  component: SelectInterestPage,
   render: () => ({
-    components: { MyPage: Login },
+    components: { MyPage: SelectInterestPage },
     template: '<my-page />'
   }),
   parameters: {
@@ -14,9 +14,9 @@ const meta = {
     layout: 'fullscreen'
   },
   // This component will have an automatically generated docsPage entry: https://storybook.js.org/docs/writing-docs/autodocs
-} satisfies Meta<typeof Login>
+} satisfies Meta<typeof SelectInterestPage>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Home: Story = {}
+export const SelectInterest: Story = {}

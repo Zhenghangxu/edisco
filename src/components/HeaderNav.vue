@@ -53,7 +53,7 @@ const menuItems = ref([
 ])
 </script>
 <template>
-  <nav class="main-nav card">
+  <nav class="main-nav">
     <Menubar :model="menuItems" class="gap-2">
       <template #start>
         <BrandLogoLite />
@@ -70,7 +70,7 @@ const menuItems = ref([
             />
             <span
               v-if="item.shortcut"
-              class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
+              class="ml-auto border-1 border-round surface-100 text-xs p-1"
               >{{ item.shortcut }}</span
             >
           </a>

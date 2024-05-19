@@ -5,26 +5,27 @@ const props = withDefaults(
     color?: string
   }>(),
   {
-    size: '3',
+    size: '30px',
     color: '#000'
   }
 )
 </script>
 
 <template>
-  <div :class="'ic-container h-3 w-' + size">
+  <div class="ic-container" :style="{'--icon-ms': size }">
     <slot></slot>
   </div>
 </template>
 
-<style scoped>
+<style>
 .ic-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.ic-container svg {
-  max-width: 100%;
-  height: auto;
+.ic-container > svg {
+  height: var(--icon-ms) !important;
+  overflow: hidden;
+  width: auto;
 }
 </style>

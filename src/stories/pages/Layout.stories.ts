@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import Layout from '../../views/LayoutPage.vue'
 
 const meta = {
-  title: 'Layout/Basic Page',
+  title: 'Layout/LayoutContainers',
   component: Layout,
   decorators: [() => ({ template: '<div class="content-borders"><story/></div>' })],
   argTypes: {

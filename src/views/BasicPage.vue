@@ -7,5 +7,6 @@ import FooterDefault from '@/components/FooterDefault.vue'
   <LayoutPage type="full" internalLayout="vertical" gap="0" padding="0" className="p-2">
     <HeaderNav />
   </LayoutPage>
+  <slot></slot> 
   <FooterDefault />
 </template>

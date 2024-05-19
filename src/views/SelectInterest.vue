@@ -7,13 +7,12 @@ import Divider from 'primevue/divider'
 import NavLite from '@/components/NavLite.vue'
 import { ref } from 'vue'
 import BasicPage from './BasicPage.vue'
+import InputOtp from 'primevue/inputotp'
+import InterestSelect from '@/components/InterestSelect.vue'
 
-const loginEmail = ref('')
-const password = ref('')
-const inputStyle = ''
 
 defineProps<{
-  email: string
+  selectedItems?: Array<string>
 }>()
 </script>
 
@@ -26,9 +25,6 @@ defineProps<{
       padding="0"
       className="items-stretch flex-nowrap justify-center gap-8 lg:gap-[30px] lg:flex-row sm:items-center p-2 sm:p-0 my-8 md:my-[120px]"
     >
-      <LayoutPage type="half" internalLayout="vertical" gap="0" padding="0">
-        <NavLite title="Master Your Future Now" />
-      </LayoutPage>
       <LayoutPage
         type="half"
         internalLayout="vertical"
@@ -42,15 +38,25 @@ defineProps<{
             internalLayout="vertical"
             gap="6"
             padding="0"
-            className="max-w-[420px]"
+            className="max-w-[95vw] md:max-w-[900px]"
           >
-            <InputText type="text" v-model="loginEmail" name="email" placeholder="Email" :class="inputStyle" />
-            <Password v-model="password" :feedback="false" name="password" placeholder="Password" toggleMask />
-            <Button label="Log In" type="submit" severity="primary"></Button>
-            <Divider align="center" class="m-0">
-              <span>Don't Have An Account?</span>
-            </Divider>
-            <Button label="Sign Up" severity="secondary"></Button>
+            <h3 class="sub-heading">Tell Us What You Like</h3>
+            <InterestSelect></InterestSelect>
+            <div class="flex flex-row">
+              <Button
+                label="Continue"
+                type="submit"
+                severity="primary"
+                class="w-full md:w-[70%] mx-auto"
+              >
+              </Button>
+              <Button
+                label="Remind Me Later"
+                link
+                severity="secondary"
+                class="w-full md:w-[70%] mx-auto"
+              ></Button>
+            </div>
           </LayoutPage>
         </form>
       </LayoutPage>
@@ -59,3 +65,5 @@ defineProps<{
 </template>
 
 <style scoped></style>
+
+<!-- :ptOptions="{autocomplete:'one-time-code'}" -->
