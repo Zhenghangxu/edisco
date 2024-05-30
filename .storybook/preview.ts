@@ -3,6 +3,9 @@ import PrimeVue from 'primevue/config'
 import { setup } from '@storybook/vue3'
 import '../src/index.css'
 
+import Ripple from 'primevue/ripple'
+
+
 const preview: Preview = {
   parameters: {
     chromatic: {
@@ -18,7 +21,9 @@ const preview: Preview = {
 }
 
 setup((app) => {
-  app.use(PrimeVue, { unstyle: true })
+  app.use(PrimeVue, { unstyle: true, ripple: true});
+  app.directive('ripple', Ripple);
 })
+
 
 export default preview
