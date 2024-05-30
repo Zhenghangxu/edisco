@@ -26,7 +26,8 @@ export default {
       colors: {
         primary: 'var(--primary-color)',
         secondary: 'var(--secondary-color)',
-        // accent: 'var(--aw-color-accent)',
+        error: 'var(--error-color)',
+        uncertain: 'var(--uncertain-color)',
         // default: 'var(--aw-color-text-default)',
         // muted: 'var(--aw-color-text-muted)'
       },
