@@ -17,4 +17,18 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+  args: {
+    instructor: 'Dr. John Doe',
+    courseName: 'CHEM 101: Introduction to Chemistry',
+    rating: 4.5,
+    image: {
+      src: 'https://via.placeholder.com/400x250',
+      alt: 'Course Image'
+    },
+    widget: null,
+    subject: 'engineering',
+    link: 'https://www.google.com',
+    eligibility: 'eligible',
+  }
+}

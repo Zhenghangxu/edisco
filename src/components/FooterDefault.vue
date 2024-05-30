@@ -3,6 +3,7 @@ import Divider from 'primevue/divider'
 import BrandLogo from '@/components/icons/BrandLogo.vue'
 import iconContainer from './icons/iconContainer.vue'
 import { computed } from 'vue'
+import { footerInfo } from './navigationInfo'
 interface link {
   name: string
   url: string
@@ -26,13 +27,15 @@ const props = withDefaults(
     copyRight?: string
   }>(),
   {
-    navlinks: () => [{ title: 'Company', links: [{ name: '', url: '' }] }],
+    navlinks: () => {
+      return footerInfo
+    },
     logoImg: '',
     tagline: 'Master Your Future Now With Edisco',
     // @ts-expect-error
     // eslint-disable-next-line vue/require-valid-default-prop
     socialLinks: [],
-    copyRight: 'Designed and Coded by @Jason Xu'
+    copyRight: 'Designed & Developed by @Jason Xu'
   }
 )
 const borderStyles = 'border-solid border-[1px] border-gray-200 rounded-lg'
@@ -96,77 +99,20 @@ const containerClass = computed(() => {
         </div>
       </div>
       <div class="card col-span-2 flex flex-row md:justify-around justify-between flex-wrap">
-        <div class="flex-[0_1_min(33vw,150px)]">
-          <h3 class="avz awf awo axu leading-6 font-semibold text-sm text-center ">Solutions</h3>
-          <ul role="list" class="mt-6 list-none pl-0 text-center ">
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-          </ul>
-        </div>
-        <div class="flex-[0_1_min(33vw,150px)]">
-          <h3 class="avz awf awo axu leading-6 font-semibold text-sm text-center ">Solutions</h3>
-          <ul role="list" class="mt-6 list-none pl-0 text-center ">
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-          </ul>
-        </div>
-        <div class="flex-[0_1_min(33vw,150px)]">
-          <h3 class="avz awf awo axu leading-6 font-semibold text-sm text-center ">Solutions</h3>
-          <ul role="list" class="mt-6 list-none pl-0 text-center ">
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
-              >
-            </li>
-            <li>
-              <a href="#" class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
-                >Marketing</a
+        <div
+          class="flex-[0_1_min(33vw,150px)]"
+          v-for="(group, index) in props.navlinks"
+          :key="index"
+        >
+          <h3 class="leading-6 font-semibold text-md text-left">
+            {{ group.title }}
+          </h3>
+          <ul role="list" class="mt-6 list-none pl-0 text-left">
+            <li v-for="(subGroup, subIndex) in group.links" :key="subIndex">
+              <a
+                :href="subGroup.url"
+                class="hover:text-gray-900 no-underline leading-6 text-sm text-gray-600"
+                >{{ subGroup.name }}</a
               >
             </li>
           </ul>
@@ -177,7 +123,7 @@ const containerClass = computed(() => {
       <div
         class="card flex items-center justify-center pt-6 border-t-[1px] border-0 border-gray-200 border-solid"
       >
-        <p>{{ copyRight }}</p>
+        <p class="text-gray-400">{{ copyRight }}</p>
       </div>
     </div>
   </div>

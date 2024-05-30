@@ -8,5 +8,7 @@ export const subjectAssetMapping = [
   { name: 'Science', value: 'science', icon: 'ph:atom-duotone' },
   { name: 'Business', value: 'business', icon: 'ph:briefcase-duotone' },
   { name: 'Education', value: 'education', icon: 'ph:graduation-cap-duotone' },
-  { name: 'History', value: 'history', icon: 'ph:scroll-duotone' }
+  { name: 'History', value: 'history', icon: 'ph:scroll-duotone' },
+  { name: 'Chemistry', value: 'chemistry', icon: 'ph:flask-duotone' },
+  { name: 'biology', value: 'biology', icon: 'ph:leaf-duotone' }
 ]

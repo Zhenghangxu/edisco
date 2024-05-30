@@ -8,53 +8,66 @@ import BrandLogoLite from '@/components/icons/BrandLogoLite.vue'
 
 const menuItems = ref([
   {
-    label: 'Home'
+    label: 'Explore'
   },
   {
-    label: 'Features'
+    label: 'Metrics',
   },
+  // {
+  //   label: 'Projects',
+  //   items: [
+  //     {
+  //       label: 'Core',
+  //       shortcut: '⌘+S'
+  //     },
+  //     {
+  //       label: 'Blocks',
+  //       shortcut: '⌘+B'
+  //     },
+  //     {
+  //       label: 'UI Kit',
+  //       shortcut: '⌘+U'
+  //     },
+  //     {
+  //       separator: true
+  //     },
+  //     {
+  //       label: 'Templates',
+  //       items: [
+  //         {
+  //           label: 'Apollo',
+  //           badge: 2
+  //         },
+  //         {
+  //           label: 'Ultima',
+  //           badge: 3
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // },
   {
-    label: 'Projects',
-    items: [
-      {
-        label: 'Core',
-        shortcut: '⌘+S'
-      },
-      {
-        label: 'Blocks',
-        shortcut: '⌘+B'
-      },
-      {
-        label: 'UI Kit',
-        shortcut: '⌘+U'
-      },
-      {
-        separator: true
-      },
-      {
-        label: 'Templates',
-        items: [
-          {
-            label: 'Apollo',
-            badge: 2
-          },
-          {
-            label: 'Ultima',
-            badge: 3
-          }
-        ]
-      }
-    ]
-  },
-  {
-    label: 'Contact',
-    badge: 3
+    label: 'Portals'
   }
 ])
 </script>
 <template>
   <nav class="main-nav">
-    <Menubar :model="menuItems" class="gap-2">
+    <Menubar
+      :model="menuItems"
+      class="gap-2"
+      :pt="{
+        root: {
+          class: ['border-none']
+        },
+        menu: {
+          class: ['md:w-full md:justify-center md:gap-4']
+        },
+        menuItem: {
+          class: ['nav-menu-hover-effect']
+        }
+      }"
+    >
       <template #start>
         <BrandLogoLite />
       </template>

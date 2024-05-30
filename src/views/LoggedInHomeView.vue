@@ -1,12 +1,26 @@
 <script setup lang="ts">
 import LayoutPage from './LayoutPage.vue'
-import Button from 'primevue/button'
 import BasicPage from './BasicPage.vue'
-import InterestSelect from '@/components/InterestSelect.vue'
+import CourseCardGrid, { exampleContentList } from '@/components/CourseCardGrid.vue'
+import type { courseCardProps } from '@/components/CourseCard.vue'
 
-defineProps<{
-  selectedItems?: Array<string>
-}>()
+export interface contentGroup {
+  title?: string
+  content?: courseCardProps[]
+}
+
+const props = withDefaults(
+  defineProps<{
+    contentGroups?: contentGroup[]
+  }>(),
+  {
+    contentGroups: [
+      { title: 'Summer 2020 Collections', content: exampleContentList },
+      { title: 'Business Students Like You also Pick These', content: exampleContentList },
+      { title: 'Last Minute Rush! Seats are Low!', content: exampleContentList }
+    ] as any
+  }
+)
 </script>
 
 <template>
@@ -16,9 +30,16 @@ defineProps<{
       internalLayout="vertical"
       gap="6"
       padding="0"
-      className="max-w-[95vw] md:max-w-[900px] mx-auto"
+      className="max-w-[95vw] md:max-w-[1200px] mx-auto py-[60px]"
     >
-      text here
+      <div
+        v-for="(group, index) in contentGroups"
+        :key="index"
+        :content="group.content"
+      >
+        <h2 class="px-2 font-sans text-xl text-center md:text-left md:text-3xl font-serif text-slate-800">{{ group.title }}</h2>
+        <CourseCardGrid :courseList="group.content as any" />
+      </div>
     </LayoutPage>
   </BasicPage>
 </template>

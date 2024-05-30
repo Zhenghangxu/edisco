@@ -10,3 +10,43 @@
   width: var(--nav-logo-width);
   height: auto;
 }
+.nav-menu-hover-effect a:hover,
+.nav-menu-hover-effect[data-p-focused='true'] a,
+.p-focus a {
+  transform: scale(1.2);
+  background: transparent !important;
+  text-shadow: 0 0 13px rgba(0, 0, 0, 0.2);
+  @apply text-slate-800;
+  position: relative;
+}
+.nav-menu-hover-effect[data-p-focused='true'] a::after{
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  top: 74%;
+  left: 50%;
+  border-radius: 50%;
+  background: var(--secondary-color);
+}
+
+.p-focus .p-menuitem-content {
+  background: transparent !important;
+}
+
+.nav-menu-hover-effect a {
+  transform: scale(1);
+  background: transparent;
+  transition: all 0.3s ease-in-out;
+  @apply text-slate-500 text-xl;
+}
+.nav-menu-hover-effect .p-menuitem-content:hover {
+  background: transparent;
+}
+
+.p-menubar-end .p-avatar{
+  width: calc(2 * var(--input-padding-y) + var(--input-height) - 6px);
+  height: calc(2 * var(--input-padding-y) + var(--input-height) - 6px);
+}
+
+/* Rectangle 10 */

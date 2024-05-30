@@ -3,13 +3,17 @@
   /* move these to the new sass style system */
   --secondary-color: #36b05f;
   --primary-color: #5c36ad;
+  --uncertain-color: #368bb0;
+  --error-color: #b03d36;
+  --gray-line-color: #e1e1e1;
   --nav-logo-width: 40px;
-  --input-padding-y: 1rem !important; 
+  --input-padding-y: 1rem !important;
   --input-padding-x: 20px !important;
   --input-height: 19px !important;
   /* select */
 
   /* Default Value */
+  --font-serif: 'Merriweather', serif;
   --icon-ms: 20px;
   /*  */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,

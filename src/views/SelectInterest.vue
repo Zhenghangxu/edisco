@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import InputText from 'primevue/inputtext'
-import Password from 'primevue/password'
 import LayoutPage from './LayoutPage.vue'
 import Button from 'primevue/button'
-import Divider from 'primevue/divider'
-import NavLite from '@/components/NavLite.vue'
-import { ref } from 'vue'
 import BasicPage from './BasicPage.vue'
-import InputOtp from 'primevue/inputotp'
 import InterestSelect from '@/components/InterestSelect.vue'
 
 
