@@ -5,13 +5,17 @@ import Badge from 'primevue/badge'
 import InputText from 'primevue/inputtext'
 import Avatar from 'primevue/avatar'
 import BrandLogoLite from '@/components/icons/BrandLogoLite.vue'
+import InputGroup from 'primevue/inputgroup'
+import InputGroupAddon from 'primevue/inputgroupaddon'
+import { Icon } from '@iconify/vue/dist/iconify.js'
+import Card from 'primevue/card';
 
 const menuItems = ref([
   {
     label: 'Explore'
   },
   {
-    label: 'Metrics',
+    label: 'Metrics'
   },
   // {
   //   label: 'Projects',
@@ -55,13 +59,13 @@ const menuItems = ref([
   <nav class="main-nav">
     <Menubar
       :model="menuItems"
-      class="gap-2"
+      class="gap-6"
       :pt="{
         root: {
           class: ['border-none']
         },
         menu: {
-          class: ['md:w-full md:justify-center md:gap-4']
+          class: ['md:w-full md:justify-end md:gap-4']
         },
         menuItem: {
           class: ['nav-menu-hover-effect']
@@ -90,12 +94,19 @@ const menuItems = ref([
         </div>
       </template>
       <template #end>
-        <div class="flex items-center justify-center gap-2">
-          <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" />
-          <Avatar
-            image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png"
-            shape="circle"
-          />
+        <div class="flex items-center justify-center gap-2 md:gap-[20vw]">
+          <div class="flex flex-row gap-2 items-center">
+            <!-- <Icon icon="ph:magnifying-glass-duotone" width="30" height="30" class="text-slate-500"/> -->
+            <InputText type="text" placeholder="Search" class="w-8rem sm:w-auto simple-search" />
+          </div>
+          <div class="user-profile">
+            <Avatar
+              image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png"
+              shape="circle"
+              size="large"
+            />
+
+          </div>
         </div>
       </template>
     </Menubar>

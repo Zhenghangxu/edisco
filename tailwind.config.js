@@ -28,6 +28,7 @@ export default {
         secondary: 'var(--secondary-color)',
         error: 'var(--error-color)',
         uncertain: 'var(--uncertain-color)',
+        yellow: 'var(--yellow)',
         // default: 'var(--aw-color-text-default)',
         // muted: 'var(--aw-color-text-muted)'
       },

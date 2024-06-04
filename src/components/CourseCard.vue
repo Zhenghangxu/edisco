@@ -22,6 +22,7 @@ export interface courseCardProps {
   capacity?: number
   availability?: number
   eligibility?: 'eligible' | 'uneligible' | 'uncertain'
+  showIcon?: boolean
 }
 
 const props = withDefaults(defineProps<courseCardProps>(), {
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<courseCardProps>(), {
   eligibility: 'eligible',
   availability: 60,
   capacity: 100,
+  showIcon: false
 })
 const percentageFull = Math.round(((props.capacity - props.availability) / props.capacity) * 100)
 const iconAsset = subjectAssetMapping.find((item) => item.value === props.subject)
@@ -85,7 +87,7 @@ const defaultEvent = (url: string) => {
     </template>
     <template #title>
       <div class="flex flex-row gap-2 items-center">
-        <Icon :icon="iconAsset?.icon as string" width="40" height="40" class="text-primary" />
+        <Icon v-if="showIcon" :icon="iconAsset?.icon as string" width="40" height="40" class="text-primary" />
         <span>{{ courseName }}</span>
       </div>
     </template>

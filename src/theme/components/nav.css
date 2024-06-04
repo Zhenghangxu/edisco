@@ -13,13 +13,13 @@
 .nav-menu-hover-effect a:hover,
 .nav-menu-hover-effect[data-p-focused='true'] a,
 .p-focus a {
-  transform: scale(1.2);
+  transform: scale(1.09);
   background: transparent !important;
   text-shadow: 0 0 13px rgba(0, 0, 0, 0.2);
   @apply text-slate-800;
   position: relative;
 }
-.nav-menu-hover-effect[data-p-focused='true'] a::after{
+.nav-menu-hover-effect[data-p-focused='true'] a::after {
   content: '';
   position: absolute;
   width: 5px;
@@ -44,9 +44,24 @@
   background: transparent;
 }
 
-.p-menubar-end .p-avatar{
+.p-menubar-end .p-avatar {
   width: calc(2 * var(--input-padding-y) + var(--input-height) - 6px);
   height: calc(2 * var(--input-padding-y) + var(--input-height) - 6px);
 }
+
+.simple-search {
+  border: none;
+  border-bottom: 1px solid var(--gray-line-color);
+  border-radius: 0px;
+  padding-bottom: 12px;
+}
+.simple-search:focus {
+  box-shadow: none;
+  border-bottom: 2px solid var(--secondary-color);
+}
+.simple-search::placeholder {
+  @apply text-slate-500 text-[1.25rem];
+}
+
 
 /* Rectangle 10 */

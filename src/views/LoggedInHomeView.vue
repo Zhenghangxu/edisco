@@ -16,8 +16,8 @@ const props = withDefaults(
   {
     contentGroups: [
       { title: 'Summer 2020 Collections', content: exampleContentList },
-      { title: 'Business Students Like You also Pick These', content: exampleContentList },
-      { title: 'Last Minute Rush! Seats are Low!', content: exampleContentList }
+      { title: 'Popular Among Business Student', content: exampleContentList },
+      { title: 'Last Minute Rush!', content: exampleContentList }
     ] as any
   }
 )
@@ -30,14 +30,14 @@ const props = withDefaults(
       internalLayout="vertical"
       gap="6"
       padding="0"
-      className="max-w-[95vw] md:max-w-[1200px] mx-auto py-[60px]"
+      className="max-w-[95vw] md:max-w-[1200px] mx-auto py-[82px]"
     >
       <div
         v-for="(group, index) in contentGroups"
         :key="index"
         :content="group.content"
       >
-        <h2 class="px-2 font-sans text-xl text-center md:text-left md:text-3xl font-serif text-slate-800">{{ group.title }}</h2>
+        <h2 class="px-2 font-sans font-medium text-xl text-center md:text-left md:text-3xl font-serif text-slate-800">{{ group.title }}</h2>
         <CourseCardGrid :courseList="group.content as any" />
       </div>
     </LayoutPage>
