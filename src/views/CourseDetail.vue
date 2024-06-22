@@ -2,13 +2,16 @@
 import { computed } from 'vue'
 import LayoutPage from './LayoutPage.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
-import AccordionTab from 'primevue/accordiontab'
-import Accordion from 'primevue/accordion'
-import semesterCard from '@/components/semesterCard.vue'
-import Fieldset from 'primevue/fieldset'
 import Button from 'primevue/button'
 import Image from 'primevue/image'
 import Panel from 'primevue/panel'
+import BasicStats from '@/components/courseDetail/BasicStats.vue'
+import EnrollmentStats from '@/components/courseDetail/EnrollmentStats.vue'
+import EligibilityDisplay from '@/components/courseDetail/EligibilityDisplay.vue'
+import type { requirementItem } from '@/components/courseDetail/EligibilityDisplay.vue'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import InstructorCard from '@/components/courseDetail/InstructorCard.vue'
 
 export interface courseDetailProps {
   title: string
@@ -35,11 +38,13 @@ interface simpleInstructor {
   name: string
   image: string
   url: string
+  description: string
+  title: string
 }
 
 interface eligibilityInfo {
   eligibility: 'eligible' | 'uneligible' | 'uncertain'
-  eligibilityRequirements: string[]
+  eligibilityRequirements: requirementItem[]
 }
 
 interface courseRecommendation {
@@ -54,7 +59,9 @@ interface review {
   review: string
   rating: number
 }
-
+// if eligibility is eligible => headerClass = 'secondary-muted'
+// if eligibility is uneligible => headerClass = 'error-muted'
+// if eligibility is uncertain => headerClass = 'uncertain-muted
 const props = withDefaults(defineProps<courseDetailProps>(), {
   title: 'CBSE 122',
   rating: 4.5,
@@ -67,11 +74,15 @@ const props = withDefaults(defineProps<courseDetailProps>(), {
     {
       name: 'Dr. Jonathan R. Vincent',
       image: '/images/hans-reniers-lQGJCMY5qcM-unsplash.jpg',
+      title: 'Professor, Ph.D.',
+      description: "Dr. Jonathan R. Vincent is a Professor of Chemistry at the University of California, Berkeley. He received his Ph.D. in Chemistry from the University of California, Berkeley, and his B.S. in Chemistry from the University of California, Los Angeles. Dr. Vincent has published over 100 research articles in the field of chemistry and has received numerous awards for his research. He is a Fellow of the American Chemical Society and a member of the National Academy of Sciences. Dr. Vincent has taught chemistry at the undergraduate and graduate levels for over 20 years and has mentored many students in his research laboratory. He is passionate about teaching and is dedicated to helping students succeed in their studies.",
       url: '#'
     },
     {
       name: 'Dr. Sarah Jane Smith',
       image: '/images/mr-cup-fabien-barral-history-unsplash.jpg',
+      title: 'Associate Professor, Ph.D.',
+      description: "Dr. Sarah Jane Smith is an Associate Professor of History at the University of California, Berkeley. She received her Ph.D. in History from the University of California, Berkeley, and her B.A. in History from the University of California, Los Angeles. Dr. Smith's research focuses on the history of the United States in the 20th century, with an emphasis on social movements and political activism. She has published two books and numerous articles on these topics. Dr. Smith has taught history at the undergraduate and graduate levels for over 10 years and has won several teaching awards. She is committed to helping students develop critical thinking skills and engage with the past in meaningful ways.",
       url: '#'
     }
   ],
@@ -83,8 +94,21 @@ const props = withDefaults(defineProps<courseDetailProps>(), {
   campuses: () => ['Main Campus', 'Downtown Campus'],
   requirements: () => {
     return {
-      eligibility: 'eligible',
-      eligibilityRequirements: ['Class 11 Physics', 'Basic Math Skills']
+      eligibility: 'uncertain',
+      eligibilityRequirements: [
+        {
+          requirementText: 'Must have a high school diploma',
+          isRequirementMet: false
+        },
+        {
+          requirementText: 'Must complete the prerequisite course CBSE Class 11 Physics',
+          isRequirementMet: true
+        },
+        {
+          requirementText: 'Must have a basic understanding of mathematics',
+          isRequirementMet: true
+        }
+      ]
     }
   },
   skills: () => ['Physics', 'Mathematics'],
@@ -110,16 +134,22 @@ const props = withDefaults(defineProps<courseDetailProps>(), {
     internalLayout="vertical"
     gap="0"
     padding="0"
-    className=" relative items-start flex-nowrap justify-around gap-8 lg:gap-[20px] lg:flex-row sm:items-start p-2 my-8 md:my-[50px] px-[15px] md:px-[5%]"
+    className="relative bg-background flex-nowrap flex-col-reverse justify-around gap-8 lg:gap-[20px] md:flex-row md:items-start items-center p-2 my-8 md:my-[150px] md:mb-[300px] px-[15px] md:px-[5%]"
   >
-    <LayoutPage type="half" internalLayout="vertical" gap="0" padding="0" className="items-end">
+    <LayoutPage
+      type="half"
+      internalLayout="vertical"
+      gap="0"
+      padding="0"
+      className="items-center md:items-start scroll-smoo th"
+    >
       <!-- <LocationAndTime /> -->
       <!-- <Instructors /> -->
       <!-- <Requirements /> -->
       <!-- <Skills /> -->
       <!-- <RecommendedCourses /> -->
       <!-- <Reviews /> -->
-      <div class="max-w-[80%] flex flex-col gap-4 items-end">
+      <div class="flex flex-col gap-4 items-end">
         <Image
           :src="imagePath"
           width="100%"
@@ -129,181 +159,158 @@ const props = withDefaults(defineProps<courseDetailProps>(), {
             })
           }"
         ></Image>
-        <Panel>
-          <template #header>
-            <div class="font-semibold text-xl">Instructors</div>
-          </template>
-          <p class="m-0">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-            mollit anim id est laborum.
-          </p>
-        </Panel>
-        <Panel>
-          <template #header>
-            <div class="font-semibold text-xl">Skills</div>
-          </template>
-          <p class="m-0">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-            mollit anim id est laborum.
-          </p>
-        </Panel>
-        <Panel>
-          <template #header>
-            <div class="font-semibold text-xl">Reviews</div>
-          </template>
-          <p class="m-0">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-            mollit anim id est laborum.
-          </p>
-        </Panel>
-        <Panel>
-          <template #header>
-            <div class="font-semibold text-xl">You Might Also Like</div>
-          </template>
-          <p class="m-0">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-            dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-            mollit anim id est laborum.
-          </p>
-        </Panel>
-      </div>
-    </LayoutPage>
-    <LayoutPage type="side" internalLayout="vertical" gap="0" padding="0" className="">
-      <!-- <Video/> -->
-      <!-- <BasicInfo/> -->
-      <div class="flex flex-col gap-4">
-        <div class="flex flex-row items-center gap-6">
-          <div class="title font-sans text-2xl font-bold text-slate-800">{{ title }}</div>
-          <div class="rating flex flex-row gap-1 items-center">
-            <Icon width="20" height="20" icon="ph:star-fill" class="text-yellow"></Icon>{{ rating }}
-          </div>
-        </div>
-        <div class="subtitle font-serif text-lg text-slate-600">
-          {{ subtitle }} •
-          <span class="font-sans text-xl font-semibold text-primary">{{ credit }}</span> credit
-        </div>
-        <Accordion :activeIndex="0" class="mt-[-20px]">
-          <AccordionTab
+        <div class="mt-3 md:mt-[80px]"></div>
+        <div class="card">
+          <TabView
             :pt="{
-              headerAction: (options) => ({
-                class: [
-                  'text-base border-none font-light bg-transparent text-slate-500 text-base font-sans pl-0 justify-start gap-4'
-                ]
-              }),
-              header: (options) => ({
-                class: ['text-base font-light']
-              }),
-              //   root: (options) => ({
-              //     class: ['max-w-[80%]']
-              //   }),
-              content: (options) => ({
-                class: [
-                  'text-sm pl-0 border-solid border-[1px] border-slate-200 rounded-lg !p-4 m-1'
-                ]
+              root: (options) => ({
+                class: ['w-full']
               })
             }"
           >
-            <template #header>
-              <!-- get the first 110 wrds of desc -->
-              <div class="font-semibold text-gray-600">Description</div>
-            </template>
-            <div class="desc text-sm">
-              {{ props.description }}
-            </div>
-          </AccordionTab>
-        </Accordion>
-        <div class="stats font-sans text-base grid grid-cols-2 md:flex-row gap-x-1 gap-y-2">
-          <div class="flex col-span-1 flex-row">
-            <div class="flex flex-row items-center gap-1">
-              <span class="font-semibold font-serif text-2xl text-primary">{{ availability }}</span>
-              <span class="text-gray-500">/{{ capacity }} seats left</span>
-            </div>
-          </div>
-          <div class="flex col-span-1 flex-row">
-            <div class="flex flex-row items-center gap-1">
-              <span class="font-semibold font-serif text-2xl text-primary">{{
-                daysLeftForSignup
-              }}</span>
-              <span class="text-gray-500">Days Left for Signup</span>
-            </div>
-          </div>
-          <div class="flex col-span-1 flex-row gap-1 items-center">
-            <Icon icon="ph:building-duotone" width="25" height="25" class="text-secondary" />
-            <span class="text-md font-sans">Bradford, Toronto, Online</span>
-          </div>
-          <div class="flex col-span-1 flex-row gap-1 items-center">
-            <Icon icon="ph:calendar-duotone" width="25" height="25" class="text-secondary" />
-            <span class="text-md font-sans">Fall 2021, Spring 2022</span>
-          </div>
+            <TabPanel header="Instructors">
+              <p class="mb-4">
+                Meet the instructors for this course:
+              </p>
+              <div class="flex flex-col gap-4">
+                <InstructorCard
+                  v-for="instructor in instructors"
+                  :key="instructor.name"
+                  :instructorName="instructor.name"
+                  :title="instructor.title"
+                  :desc="instructor.description"
+                  :image="instructor.image"
+                />
+              </div>
+            </TabPanel>
+            <TabPanel header="Skills">
+              <p class="m-0">
+                Students are expected to learn a wide-range of skills in this course (Please note that this is not an exhaustive list):
+
+              </p>
+            </TabPanel>
+            <TabPanel header="More Information">
+              <p class="mb-4">
+                More information about the course can be found here:
+              </p>
+              <Panel
+                class="details-left-panel"
+                :pt="{
+                  header: (options) => ({
+                    class: ['border-0 bg-transparent']
+                  }),
+                  content: (options) => ({
+                    class: ['border-0 bg-transparent']
+                  })
+                }"
+              >
+                <template #header>
+                  <div class="font-bold text-2xl font-serif">Textbook</div>
+                </template>
+                <p class="m-0">
+                  This course uses the textbook "Chemistry: The Central Science" by Brown, LeMay. We also use the online platform Mastering Chemistry for homework assignments and quizzes. The textbook and online platform are available for purchase at the campus bookstore or online.
+                  To get the most out of this course, we recommend that you read the assigned chapters before each lecture and complete the homework assignments on time. The textbook and online platform are valuable resources that will help you succeed in this course.
+                  To purchase the textbook and access the online platform, please check with the campus bookstore or visit the publisher's website. 
+                  Please check with the instructor for the most up-to-date information on the required textbook and online platform.
+                </p>
+              </Panel>
+              <Panel
+                class="details-left-panel"
+                :pt="{
+                  header: (options) => ({
+                    class: ['border-0 bg-transparent']
+                  }),
+                  content: (options) => ({
+                    class: ['border-0 bg-transparent']
+                  })
+                }"
+              >
+                <template #header>
+                  <div class="font-bold text-2xl font-serif">Syllabus</div>
+                </template>
+                <p class="m-0">
+                  The syllabus for this course is available online. Please check the course website for the most up-to-date information on the course schedule, assignments, and exams. The syllabus will outline the topics covered in each lecture, the reading assignments, and the due dates for homework assignments and exams. The syllabus is a valuable resource that will help you stay organized and on track throughout the semester. Please review the syllabus carefully and contact the instructor if you have any questions or concerns.
+                </p>
+              </Panel>
+              <Panel
+                class="details-left-panel"
+                :pt="{
+                  header: (options) => ({
+                    class: ['border-0 bg-transparent']
+                  }),
+                  content: (options) => ({
+                    class: ['border-0 bg-transparent']
+                  })
+                }"
+              >
+                <template #header>
+                  <div class="font-bold text-2xl font-serif">Contact</div>
+                </template>
+                <p class="m-0">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                  exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                </p>
+              </Panel>
+            </TabPanel>
+          </TabView>
         </div>
-        <Panel
-          :pt="{
-            header: (options) => ({
-              class: ['text-xl font-semibold border-0 eligibility-panel-header']
-            }),
-            root: (options) => ({
-              class: ['border-solid border-[1px] border-slate-200 rounded-lg']
-            }),
-            content: (options) => ({
-              class: ['border-0 eligibility-panel-content p-3']
-            })
-          }"
+      </div>
+    </LayoutPage>
+    <LayoutPage
+      type="side"
+      internalLayout="vertical"
+      gap="0"
+      padding="0"
+      className="justify-between"
+    >
+      <!-- <Video/> -->
+      <!-- <BasicInfo/> -->
+      <div class="flex flex-col gap-4 scale-column">
+        <!-- Inject title, rating, subtitle, credit, description into BasicStat -->
+        <BasicStats
+          :title="title"
+          :rating="rating"
+          :subtitle="subtitle"
+          :credit="credit"
+          :description="description"
+        />
+        <EnrollmentStats
+          :availability="availability"
+          :capacity="capacity"
+          :daysLeftForSignup="daysLeftForSignup"
+        />
+        <EligibilityDisplay :requirements="requirements" />
+
+        <!-- Button -->
+      </div>
+      <div class="flex flex-row justify-end">
+        <!-- disable the button  if not eligible -->
+        <Button
+          type="submit"
+          class="py-3 px-6 mt-10 rounded-md"
+          style="width: fit-content"
+          :disabled="requirements.eligibility === 'uneligible'"
         >
-          <template #header>
-            <!-- convert to capital case -->
-            <div class="font-semibold capitalize flex flex-row items-center gap-2">
-              <Icon
-                v-show="requirements.eligibility === 'eligible'"
-                icon="ph:check-circle"
-                width="25"
-                height="25"
-                class="text-secondary"
-              />
-              <Icon
-                v-show="requirements.eligibility === 'uneligible'"
-                icon="ph:x-circle"
-                width="25"
-                height="25"
-                class="text-error"
-              />
-              <Icon
-                v-show="requirements.eligibility === 'uncertain'"
-                icon="ph:question"
-                width="25"
-                class="text-uncertain"
-                height="25"
-              />
-              <span>{{ requirements.eligibility }}</span>
-            </div>
-          </template>
-          <p class="m-0 leading-6 text-lg">
-            You met all requirements to sign up for this course.
-            <br /><a href="">View Requirements</a>
-          </p>
-        </Panel>
-        <div class="flex flex-row justify-end">
-          <Button type="submit" class="py-3 px-6 mt-4 rounded-md" style="width: fit-content">
-            <div class="flex flex-row gap-2 items-center text-lg font-sans">
-              <span>Sign Up</span>
-              <Icon icon="ph:arrow-right" width="25" height="25" class="text-white" />
-            </div>
-          </Button>
-        </div>
+          <div class="flex flex-row gap-2 items-center text-lg font-sans">
+            <span>{{
+              requirements.eligibility === 'eligible'
+                ? 'Sign Up'
+                : requirements.eligibility === 'uneligible'
+                  ? 'Not Eligible'
+                  : 'Contact Us'
+            }}</span>
+            <Icon
+              v-show="requirements.eligibility !== 'uneligible'"
+              :icon="
+                requirements.eligibility === 'eligible' ? 'ph:arrow-right' : 'ph:phone-call-fill'
+              "
+              width="25"
+              height="25"
+              class="text-white"
+            />
+          </div>
+        </Button>
       </div>
       <!-- title,rating,subtitle,desc -->
       <!-- <Stats/> -->
@@ -317,5 +324,21 @@ const props = withDefaults(defineProps<courseDetailProps>(), {
 }
 .eligibility-panel-content {
   border-radius: 0 0 0.5rem 0.5rem !important;
+}
+.details-left-panel {
+  margin-bottom: 20px;
+  @apply leading-6;
+}
+</style>
+
+<style scoped>
+.scale-column {
+  container-type: inline-size;
+}
+/* If container < 292px, become one column */
+@container (max-width: 292px) {
+  .scale-column .stats {
+    grid-template-columns: 1fr !important;
+  }
 }
 </style>

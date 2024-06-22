@@ -19,7 +19,7 @@ const props = withDefaults(
 
 const widthClasses = {
   full: 'w-full',
-  side: 'md:w-[30%] sm:w-full sm:container',
+  side: 'md:w-[30%] sm:w-full sm:container static md:sticky md:top-[120px]',
   contained: 'container mx-auto',
   contentWithSideBar: 'md:w-[70%] sm:w-full sm:container',
   half: 'md:w-1/2 sm:w-full sm:container',
@@ -63,6 +63,7 @@ const classes = computed(() => {
   <div :class="classes">
     <slot></slot>
   </div>
+  <div class="top top"></div>
 </template>
 
 <style scoped></style>

@@ -26,9 +26,14 @@ export default {
       colors: {
         primary: 'var(--primary-color)',
         secondary: 'var(--secondary-color)',
+        success: 'var(--success-color)',
         error: 'var(--error-color)',
         uncertain: 'var(--uncertain-color)',
         yellow: 'var(--yellow)',
+        background: 'var(--background-page)',
+        "success-muted": "var(--success-muted)",
+        "error-muted": "var(--error-muted)",
+        "uncertain-muted": "var(--uncertain-muted)",
         // default: 'var(--aw-color-text-default)',
         // muted: 'var(--aw-color-text-muted)'
       },

@@ -21,7 +21,7 @@ const preview: Preview = {
 }
 
 setup((app) => {
-  app.use(PrimeVue, { unstyle: true, ripple: true});
+  app.use(PrimeVue, {ripple: true});
   app.directive('ripple', Ripple);
 })
 

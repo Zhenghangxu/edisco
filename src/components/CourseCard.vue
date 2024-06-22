@@ -75,7 +75,9 @@ const defaultEvent = (url: string) => {
       }),
       body: (options) => ({
         style: {
-          paddingTop: '0'
+          paddingTop: '0',
+          paddingBottom: '10px',
+          gap: '10px'
         }
       })
     }"
@@ -125,7 +127,7 @@ const defaultEvent = (url: string) => {
           icon="ph:check-circle"
           width="25"
           height="25"
-          class="text-secondary"
+          class="text-success"
         />
         <Icon
           v-show="eligibility === 'uneligible'"
@@ -141,13 +143,13 @@ const defaultEvent = (url: string) => {
           class="text-uncertain"
           height="25"
         />
-        <div class="message">
+        <div class="message text-sm">
           {{
             eligibility === 'eligible'
-              ? 'You can sign up in this semester'
+              ? 'Qualified for sign up'
               : eligibility === 'uneligible'
-                ? "You can't sign up in this semester"
-                : 'You may be eligible this semester'
+                ? "Doesn't meet requirements"
+                : 'Eligibility uncertain'
           }}
         </div>
       </div>
@@ -165,6 +167,7 @@ const defaultEvent = (url: string) => {
   /* title */
   .course-card .p-card-title span {
     font-size: 0.86rem;
+    min-height: calc(2 * 0.86rem * 1.235);
   }
   /* subtitle */
   .course-card .subtit {
@@ -175,6 +178,7 @@ const defaultEvent = (url: string) => {
 @container (min-width: 354px) {
   .course-card .p-card-title span {
     font-size: 1.3rem;
+    min-height: calc(2 * 1.3rem * 1.235);
   }
   /* subtitle */
   .course-card .subtit {
@@ -185,6 +189,7 @@ const defaultEvent = (url: string) => {
 @container (min-width: 768px) {
   .course-card .p-card-title span {
     font-size: 1.5rem;
+    min-height: calc(2 * 1.5rem * 1.235);
   }
   /* subtitle */
   .course-card .subtit {

@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import CourseDetailPage from '../../views/CourseDetailPage.vue'
+import SelectCampus from '../../views/SelectCampusTerm.vue'
 
+// TODO: change this back to courseDetail After testing
 const meta = {
   title: 'Pages/CourseDetailsFull',
-  component: CourseDetailPage,
+  component: SelectCampus,
   render: () => ({
-    components: { MyPage: CourseDetailPage },
+    components: { MyPage: SelectCampus },
     template: '<my-page />'
   }),
   parameters: {
@@ -13,9 +14,9 @@ const meta = {
     layout: 'fullscreen'
   }
   // This component will have an automatically generated docsPage entry: https://storybook.js.org/docs/writing-docs/autodocs
-} satisfies Meta<typeof CourseDetailPage>
+} satisfies Meta<typeof SelectCampus>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const LoggedInHomePage: Story = {}
+export const LoggedInHomePageTest: Story = {}
