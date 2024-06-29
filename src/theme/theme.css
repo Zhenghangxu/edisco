@@ -8,6 +8,7 @@
   --uncertain-color: #368bb0;
   --error-color: #b03d36;
   --gray-line-color: #e1e1e1;
+  --gray-line-dim: #f1f1f1;
   --nav-logo-width: 70px;
   --input-padding-y: 1rem !important;
   --input-padding-x: 20px !important;
@@ -22,7 +23,9 @@
   /* Default Value */
   --font-serif: 'Merriweather', serif;
   --icon-ms: 20px;
-  /*  */
+  /* FC Calendar */
+  --fc-border-color: var(--gray-line-dim) !important;
+
 
   font-family: 'Inter var', sans-serif;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';

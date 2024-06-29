@@ -1,0 +1,191 @@
+{
+    "options": {
+        "themeSystem": "bootstrap5",
+        "plugins": [
+            {
+                "id": "7",
+                "name": "@fullcalendar/daygrid",
+                "deps": [],
+                "reducers": [],
+                "isLoadingFuncs": [],
+                "contextInit": [],
+                "eventRefiners": {},
+                "eventDefMemberAdders": [],
+                "eventSourceRefiners": {},
+                "isDraggableTransformers": [],
+                "eventDragMutationMassagers": [],
+                "eventDefMutationAppliers": [],
+                "dateSelectionTransformers": [],
+                "datePointTransforms": [],
+                "dateSpanTransforms": [],
+                "views": {
+                    "dayGrid": {},
+                    "dayGridDay": {
+                        "type": "dayGrid",
+                        "duration": {
+                            "days": 1
+                        }
+                    },
+                    "dayGridWeek": {
+                        "type": "dayGrid",
+                        "duration": {
+                            "weeks": 1
+                        }
+                    },
+                    "dayGridMonth": {
+                        "type": "dayGrid",
+                        "duration": {
+                            "months": 1
+                        },
+                        "fixedWeekCount": true
+                    },
+                    "dayGridYear": {
+                        "type": "dayGrid",
+                        "duration": {
+                            "years": 1
+                        }
+                    }
+                },
+                "viewPropsTransformers": [],
+                "isPropsValid": null,
+                "externalDefTransforms": [],
+                "viewContainerAppends": [],
+                "eventDropTransformers": [],
+                "componentInteractions": [],
+                "calendarInteractions": [],
+                "themeClasses": {},
+                "eventSourceDefs": [],
+                "recurringTypes": [],
+                "initialView": "dayGridMonth",
+                "optionChangeHandlers": {},
+                "scrollGridImpl": null,
+                "listenerRefiners": {},
+                "optionRefiners": {},
+                "propSetHandlers": {}
+            },
+            {
+                "id": "8",
+                "name": "@fullcalendar/timegrid",
+                "deps": [],
+                "reducers": [],
+                "isLoadingFuncs": [],
+                "contextInit": [],
+                "eventRefiners": {},
+                "eventDefMemberAdders": [],
+                "eventSourceRefiners": {},
+                "isDraggableTransformers": [],
+                "eventDragMutationMassagers": [],
+                "eventDefMutationAppliers": [],
+                "dateSelectionTransformers": [],
+                "datePointTransforms": [],
+                "dateSpanTransforms": [],
+                "views": {
+                    "timeGrid": {
+                        "usesMinMaxTime": true,
+                        "allDaySlot": true,
+                        "slotDuration": "00:30:00",
+                        "slotEventOverlap": true
+                    },
+                    "timeGridDay": {
+                        "type": "timeGrid",
+                        "duration": {
+                            "days": 1
+                        }
+                    },
+                    "timeGridWeek": {
+                        "type": "timeGrid",
+                        "duration": {
+                            "weeks": 1
+                        }
+                    }
+                },
+                "viewPropsTransformers": [],
+                "isPropsValid": null,
+                "externalDefTransforms": [],
+                "viewContainerAppends": [],
+                "eventDropTransformers": [],
+                "componentInteractions": [],
+                "calendarInteractions": [],
+                "themeClasses": {},
+                "eventSourceDefs": [],
+                "recurringTypes": [],
+                "initialView": "timeGridWeek",
+                "optionChangeHandlers": {},
+                "scrollGridImpl": null,
+                "listenerRefiners": {},
+                "optionRefiners": {},
+                "propSetHandlers": {}
+            },
+            {
+                "id": "9",
+                "name": "@fullcalendar/interaction",
+                "deps": [],
+                "reducers": [],
+                "isLoadingFuncs": [],
+                "contextInit": [],
+                "eventRefiners": {},
+                "eventDefMemberAdders": [],
+                "eventSourceRefiners": {},
+                "isDraggableTransformers": [],
+                "eventDragMutationMassagers": [],
+                "eventDefMutationAppliers": [],
+                "dateSelectionTransformers": [],
+                "datePointTransforms": [],
+                "dateSpanTransforms": [],
+                "views": {},
+                "viewPropsTransformers": [],
+                "isPropsValid": null,
+                "externalDefTransforms": [],
+                "viewContainerAppends": [],
+                "eventDropTransformers": [],
+                "componentInteractions": [
+                    null,
+                    null,
+                    null,
+                    null
+                ],
+                "calendarInteractions": [
+                    null
+                ],
+                "themeClasses": {},
+                "eventSourceDefs": [],
+                "recurringTypes": [],
+                "initialView": "",
+                "optionChangeHandlers": {},
+                "scrollGridImpl": null,
+                "listenerRefiners": {},
+                "optionRefiners": {},
+                "propSetHandlers": {}
+            }
+        ],
+        "dayHeaderFormat": {
+            "weekday": "short"
+        },
+        "headerToolbar": {
+            "left": "",
+            "center": "",
+            "right": ""
+        },
+        "slotMinTime": "08:00:00",
+        "slotMaxTime": "22:00:00",
+        "slotDuration": "01:00:00",
+        "initialView": "timeGridWeek",
+        "allDaySlot": false,
+        "initialEvents": [
+            {
+                "id": "003",
+                "start": "2024-06-19T16:00:00.000Z",
+                "end": "2024-06-19T19:00:00.000Z",
+                "backgroundColor": "var(--primary-color)"
+            }
+        ],
+        "editable": false,
+        "selectable": false,
+        "selectMirror": false,
+        "dayMaxEvents": false,
+        "weekends": true,
+        "initialDate": "2024-06-19T16:00:00.000Z"
+    },
+    "renderId": 0,
+    "customRenderingMap": {}
+}

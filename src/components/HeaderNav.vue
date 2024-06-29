@@ -105,7 +105,6 @@ const menuItems = ref([
               shape="circle"
               size="large"
             />
-
           </div>
         </div>
       </template>

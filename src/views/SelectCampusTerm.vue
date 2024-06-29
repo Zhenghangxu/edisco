@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import LayoutPage from './LayoutPage.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
 import Button from 'primevue/button'
@@ -7,30 +7,119 @@ import BasicStats from '@/components/courseDetail/BasicStats.vue'
 import EnrollmentStats from '@/components/courseDetail/EnrollmentStats.vue'
 import EligibilityDisplay from '@/components/courseDetail/EligibilityDisplay.vue'
 import type { requirementItem } from '@/components/courseDetail/EligibilityDisplay.vue'
+import SessionSelect from '@/components/signUp/SessionSelect.vue'
+import CourseCalendar from '@/components/signUp/courseCalendar.vue'
 
-import loadingSkeleton from '@/components/signUp/loadingSkeleton.vue'
 import Listbox from 'primevue/listbox'
 import Stepper from 'primevue/stepper'
 import StepperPanel from 'primevue/stepperpanel'
+import { calendarPropsDefault } from '@/utils/event-utils'
+import { get } from 'http'
 
-const selectedSession = ref(null)
+const selectedSessions = ref(null)
 const nextButton = ref()
 const prevButton = ref(null)
 const isNextStepLoading = ref(false)
-const isPrevStepLoading = ref(false)
+const termCode = ref('')
+const campusCode = ref('')
+const primarySessionCode = ref('')
+const subSessionCode = ref('')
+let existingSessionCodeList = reactive([])
 const isCurrentStepLoading = ref(false)
-const fetchedOfferings: any = ref([])
-const totalSteps = 3
+const fetchedCampusOfferings: any = ref(null)
+const fetchedPrimarySessionOfferings: any = ref(null)
+const fetchedSubSessionOfferings: any = ref(null)
+const fetchedTermOfferings: any = ref(null)
+let sessionObj: any = reactive({})
+const FCData = ref<Record<string, any>>({})
+const totalSteps = 4
+const formRef = ref()
+const currentStep: any = ref(0)
+const isScheduleReady = ref(false)
 
-export interface courseDetailProps {
-  title: string
-  rating: number
+// Form Data
+// TODO: sync with reactive
+const handleSelectedTerm = (selectedTerm: any) => {
+  if (selectedTerm !== null) {
+    termCode.value = selectedTerm.termCode
+  } else {
+    termCode.value = ''
+  }
+}
+
+const handleSelectedCampus = (selectedCampus: any) => {
+  if (!selectedCampus) {
+    campusCode.value = ''
+    return
+  }
+  campusCode.value = selectedCampus.campusCode
+}
+const handleSelectedPrimarySession = (selectedPrimarySession: any) => {
+  if (!selectedPrimarySession) {
+    primarySessionCode.value = ''
+    return
+  }
+  primarySessionCode.value = selectedPrimarySession.sessionID
+}
+
+const handleSelectedSubSession = (selectedSubSession: any) => {
+  if (!selectedSubSession) {
+    subSessionCode.value = ''
+    return
+  }
+  subSessionCode.value = selectedSubSession.sessionID
+}
+
+// Watch Step Change
+watch(currentStep, (newVal: any) => {
+  onActiveStepChange(newVal)
+})
+
+// Watch selection changes: termCode, campusCode, primarySessionCode, subSessionCode
+watch([primarySessionCode, subSessionCode, existingSessionCodeList], (newVal) => {
+  isCurrentStepLoading.value = true
+  updateScheduleData()
+  isCurrentStepLoading.value = false
+})
+
+const submitForm = (formEle, data) => {
+  console.log('submitSuccess')
+}
+
+const onActiveStepChange = async (activeStep: number) => {
+  if (activeStep === 0) {
+    console.log('Term Selected')
+  } else if (activeStep === 1) {
+    if (fetchedCampusOfferings.value) return
+    isCurrentStepLoading.value = true
+    const offerObj = await getOfferings(props.courseCode, termCode.value)
+    fetchedCampusOfferings.value = offerObj.offering || []
+    isCurrentStepLoading.value = false
+  } else if (activeStep === 2) {
+    if (fetchedPrimarySessionOfferings.value) return
+    isCurrentStepLoading.value = true
+    sessionObj = await getSessions(campusCode.value, termCode.value, props.courseCode, false)
+    fetchedPrimarySessionOfferings.value = sessionObj.filter(
+      (session: any) => session.type === 'Lecture'
+    )
+    isCurrentStepLoading.value = false
+  } else if (activeStep === 3) {
+    if (fetchedSubSessionOfferings.value) return
+    isCurrentStepLoading.value = true
+    fetchedSubSessionOfferings.value = sessionObj.filter(
+      (session: any) => session.type === 'Tutorial' || session.type === 'Lab'
+    )
+    console.log('Sub Session Selected')
+    isCurrentStepLoading.value = false
+  } else if (activeStep === 4) {
+    console.log('Review Selected')
+  }
+}
+
+export interface signUpProps {
+  courseTitle: string
   subtitle: string
-  imagePath: string
   description: string
-  instructors: simpleInstructor[]
-  daysLeftForSignup: number
-  capacity: number
   availability: number
   semesters: string[]
   campuses: string[]
@@ -39,11 +128,9 @@ export interface courseDetailProps {
   recommendedCourses: courseRecommendation[]
   reviews: review[]
   moreInfo: string
-  credit?: number
   courseCode?: string
   signUpAction: () => void
   nextStepEnabled: boolean
-  goBack: () => void
   subSessionType?: string
 }
 
@@ -73,34 +160,64 @@ interface review {
   rating: number
 }
 
-const currentStep = ref(0)
-
 const nextStep = () => {
-  isNextStepLoading.value = true
-  setTimeout(() => {
-    console.log('next step')
-  }, 500)
   currentStep.value++
-  isNextStepLoading.value = false
+  if (currentStep.value === 5) {
+    submitForm(formRef.value, {
+      termCode: termCode.value,
+      campusCode: campusCode.value,
+      primarySessionCode: primarySessionCode.value,
+      subSessionCode: subSessionCode.value
+    })
+  }
 }
 
 const prevStep = () => {
-  isPrevStepLoading.value = true
   if (currentStep.value === 0) {
     if (window.history.length > 1) {
       window.history.back()
-    } else {
-      isPrevStepLoading.value = false
     }
     return
   }
   currentStep.value--
-  isPrevStepLoading.value = false
 }
 
 // Async Request
 
-const getOfferings = async (courseCode: string) => {
+const getTerms = async (courseCode: string) => {
+  // wait 1s
+  await new Promise((resolve) => setTimeout(resolve, 500))
+  return [
+    {
+      termCode: '00102',
+      title: 'Spring 2022',
+      subTitle: 'January to April',
+      avatar: '/images/spring.svg'
+    },
+    {
+      termCode: '00103',
+      title: 'Fall 2022',
+      subTitle: 'September to December',
+      avatar: '/images/fall.svg'
+    }
+  ]
+}
+
+const updateScheduleData = () => {
+  isScheduleReady.value = false
+  // use the code to get the selected sessions
+  selectedSessions.value = sessionObj.filter((session: any) => {
+    return (
+      session.sessionID === primarySessionCode.value ||
+      session.sessionID === subSessionCode.value ||
+      session.type === 'Exsiting'
+    )
+  })
+  console.log('Selected Sessions')
+  FCData.value = convertToFCData(selectedSessions.value)
+}
+
+const getOfferings = async (courseCode: string, termCode: string) => {
   // wait 1s
   await new Promise((resolve) => setTimeout(resolve, 500))
   return {
@@ -109,18 +226,19 @@ const getOfferings = async (courseCode: string) => {
     termDuration: 'January to April',
     offering: [
       {
-        campus: 'Main Campus',
+        title: 'Main Campus',
         subTitle: 'Waterloo',
         campusCode: '001',
+        disabled: true,
         alertMessage: 'This campus requires on-site attendance.'
       },
       {
-        campus: 'Downtown Campus',
+        title: 'Downtown Campus',
         subTitle: 'Toronto',
         campusCode: '002'
       },
       {
-        campus: 'Online',
+        title: 'Online',
         subTitle: 'Global - Eastern Time Zone',
         campusCode: '003'
       }
@@ -128,42 +246,141 @@ const getOfferings = async (courseCode: string) => {
   }
 }
 
-const getSessions = async (campusCode: any) => {
+const getSessions = async (
+  campusCode: any,
+  termCode: any,
+  courseCode: any,
+  isExisting: boolean = false
+) => {
   // wait 1s
   await new Promise((resolve) => setTimeout(resolve, 500))
-  return [
+  const existingList = [
     {
-      id: '001',
-      type: 'Tutorial',
-      title: 'Tutorial Session',
-      instructor: 'Dr Jonathan R. Vincent',
-      start: new Date('2022-01-01T10:00:00Z'),
-      end: new Date('2022-01-01T12:00:00Z'),
+      title: 'Dr Jonathan R. Vincent',
+      subTitle: 'Thursday, 11:30AM - 1:30PM',
+      sessionID: '006',
+      type: 'Exsiting',
+      alertMessageType: 'info',
+      // start from 2022-02-05, 10:00AM, end at 2022-02-05, 12:00PM
+      start: new Date('2024-06-20T16:00:00Z'),
+      end: new Date('2022-06-20T18:00:00Z'),
       recurring: {
         frequency: 'weekly',
         days: ['Monday', 'Wednesday']
       }
     },
     {
-      id: '002',
-      type: 'Lecture',
-      title: 'Lecture Session',
-      instructor: 'Dr Sarah Jane Smith',
-      start: new Date('2022-02-01T10:00:00Z'),
-      end: new Date('2022-02-01T12:00:00Z'),
+      title: 'Dr Sarah Jane Smith',
+      subTitle: 'Friday, 11:30AM - 1:30PM',
+      sessionID: '007',
+      type: 'Exsiting',
+      start: new Date('2024-06-21T15:00:00Z'),
+      end: new Date('2024-06-21T17:00:00Z'),
       recurring: {
         frequency: 'weekly',
         days: ['Tuesday', 'Thursday']
       }
     }
   ]
+  const filterResult = [
+    {
+      title: 'Dr Jonathan R. Vincent',
+      subTitle: 'Monday & Wednesday, 11:30AM - 1:30PM',
+      sessionID: '001',
+      avatar: 'https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png',
+      type: 'Tutorial',
+      alertMessageType: 'info',
+      // start from 2022-02-05, 10:00AM, end at 2022-02-05, 12:00PM
+      start: new Date('2024-06-17T16:00:00Z'),
+      end: new Date('2022-06-17T18:00:00Z'),
+      recurring: {
+        frequency: 'weekly',
+        days: ['Monday', 'Wednesday']
+      }
+    },
+    {
+      title: 'Dr Sarah Jane Smith',
+      subTitle: 'Tuesday & Thursday, 11:30AM - 1:30PM',
+      sessionID: '002',
+      type: 'Tutorial',
+      start: new Date('2024-06-18T15:00:00Z'),
+      end: new Date('2024-06-18T17:00:00Z'),
+      recurring: {
+        frequency: 'weekly',
+        days: ['Tuesday', 'Thursday']
+      }
+    },
+    {
+      title: 'Dr Sarah Jane Smith',
+      subTitle: 'Tuesday & Thursday, 11:30AM - 1:30PM',
+      alertMessage: '',
+      sessionID: '003',
+      type: 'Lecture',
+      start: new Date('2024-06-19T16:00:00Z'),
+      end: new Date('2024-06-19T19:00:00Z'),
+      recurring: {
+        frequency: 'weekly',
+        days: ['Tuesday', 'Thursday']
+      }
+    },
+    {
+      title: 'Dr Sarah Jane Smith',
+      subTitle: 'Tuesday & Thursday, 11:30AM - 1:30PM',
+      alertMessage: 'This session has conflict with your current schedule',
+      sessionID: '004',
+      type: 'Tutorial',
+      disabled: true,
+      start: new Date('2024-06-20T20:00:00Z'),
+      end: new Date('2024-06-20T23:00:00Z'),
+      recurring: {
+        frequency: 'weekly',
+        days: ['Tuesday', 'Thursday']
+      }
+    }
+  ]
+
+  if (isExisting) {
+    return existingList
+  } else {
+    return filterResult.concat(existingList)
+  }
+}
+
+const convertToFCData = (data: any) => {
+  if (!data) return
+  isScheduleReady.value = false
+  // get the event date that is the earliest
+  const eventDate = data.map((item: any) => {
+    return item.start
+  })
+  // eventDate format: new Date()
+  const minDate = new Date(Math.min.apply(null, eventDate))
+  const eventData = data.map((item: any) => {
+    return {
+      id: item.sessionID,
+      start: item.start,
+      end: item.end,
+      backgroundColor:
+        item.type === 'Lecture'
+          ? 'var(--primary-color)'
+          : item.type === 'Exsiting'
+            ? 'var(--uncertain-muted)'
+            : 'var(--secondary-color)'
+    }
+  })
+  isScheduleReady.value = true
+  return {
+    ...calendarPropsDefault,
+    initialDate: minDate,
+    events: eventData
+  }
 }
 
 // if eligibility is eligible => headerClass = 'secondary-muted'
 // if eligibility is uneligible => headerClass = 'error-muted'
 // if eligibility is uncertain => headerClass = 'uncertain-muted
-const props = withDefaults(defineProps<courseDetailProps>(), {
-  title: 'CBSE 122',
+const props = withDefaults(defineProps<signUpProps>(), {
+  courseTitle: 'CBSE 122',
   rating: 4.5,
   courseCode: 'CBSE122',
   subSessionType: 'Tutorial',
@@ -171,9 +388,6 @@ const props = withDefaults(defineProps<courseDetailProps>(), {
     'https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   subtitle: 'Physics for class 12 students',
   nextStepEnabled: true,
-  goBack: () => {
-    window.history.back()
-  },
   description:
     'This course is designed for students who are preparing for their class 12 board exams. The course covers all the topics in the CBSE syllabus for class 12 physics.',
   instructors: () => [
@@ -194,7 +408,6 @@ const props = withDefaults(defineProps<courseDetailProps>(), {
       url: '#'
     }
   ],
-  credit: 3,
   daysLeftForSignup: 30,
   capacity: 100,
   availability: 57,
@@ -236,11 +449,22 @@ const props = withDefaults(defineProps<courseDetailProps>(), {
 })
 
 onMounted(async () => {
+  isScheduleReady.value = false
   isCurrentStepLoading.value = true
-  const offerObj = (await getOfferings(props.courseCode)) || {}
-  fetchedOfferings.value = offerObj.offering || []
+  const existingCourse = await getSessions('', '', '', true)
+  existingSessionCodeList = existingCourse.map((session: any) => session.sessionID)
+  FCData.value = convertToFCData(existingCourse)
+  const termObj = await getTerms(props.courseCode)
+  fetchedTermOfferings.value = termObj
   isCurrentStepLoading.value = false
 })
+
+// onMounted(async () => {
+//   isCurrentStepLoading.value = true
+//   const offerObj = (await getTerms(props.courseCode)) || {}
+//   fetchedTermOfferings.value = offerObj || []
+//   isCurrentStepLoading.value = false
+// })
 </script>
 
 <template>
@@ -256,120 +480,118 @@ onMounted(async () => {
       internalLayout="vertical"
       gap="0"
       padding="0"
-      className="items-center md:items-start scroll-smoo th"
+      className="items-center md:items-start scroll-smooth w-full md:w-auto"
     >
-      <div class="flex flex-col gap-4 items-start">
+      <div class="flex flex-col gap-4 items-start w-full">
         <Button
           class="text-gray-800 bg-transparent hover:bg-slate-200 border-none font-sans py-3 px-6 text-xl font-base flex flex-row gap-2"
           style="width: fit-content"
-          :loading="isPrevStepLoading"
           @click="prevStep"
         >
           <Icon icon="ph:caret-left" width="25" height="25" class="text-gray-800" />
           <span>{{ currentStep === 0 ? 'Cancel Sign Up' : 'Back' }}</span>
         </Button>
         <br />
-        <div class="card flex justify-content-center">
-          <loadingSkeleton type="paragraph" v-if="isCurrentStepLoading" />
-          <Stepper
-            orientation="vertical"
-            linear
-            :activeStep="currentStep"
-            v-if="!isCurrentStepLoading"
-            class="w-full md:w-[40rem]"
-          >
-            <StepperPanel header="Confirm Term & Campus">
-              <template #content="{ highlighted }">
-                <div class="flex flex-column h-12rem">
-                  <div class="flex-auto flex justify-content-center align-items-center font-medium">
-                    <Listbox
-                      v-model="selectedSession"
-                      v-if="fetchedOfferings"
-                      :options="fetchedOfferings"
-                      optionLabel="name"
-                      class="w-full md:w-full"
-                      listStyle="max-height:450px"
-                      :pt="{
-                        list: (options) => ({
-                          class: ['flex', 'flex-col', 'gap-4']
-                        }),
-                        root: (options) => ({
-                          class: ['border-none', 'shadow-none']
-                        }),
-                        item: (options) => ({
-                          class: ['p-6', 'rounded-md']
-                        })
-                      }"
+        <div class="card flex justify-content-center w-full">
+          <form action="https://www.google.com" method="POST" ref="formRef" class="w-full">
+            <Stepper
+              orientation="vertical"
+              linear
+              :activeStep="currentStep"
+              class="min-w-[64vw] md:min-w-[27rem]"
+            >
+              <StepperPanel header="Confirm Term">
+                <template #content="{ highlighted, option }">
+                  <div class="flex flex-column h-12rem">
+                    <div
+                      class="flex-auto flex justify-content-center align-items-center font-medium"
                     >
-                      <template #option="slotProps">
-                        <div class="flex flex-row justify-between items-center">
-                          <div class="flex flex-col align-items-center gap-3">
-                            <div class="text-xl font-serif font-semibold text-slate-800">
-                              {{ slotProps.option.campus }}
-                            </div>
-                            <div class="text-md font-sans text-slate-700">
-                              {{ slotProps.option.subTitle }}
-                            </div>
-                            <div
-                              class="text-sm font-sans font-light flex flex-row items-center gap-2"
-                              v-if="slotProps.option.alertMessage"
-                            >
-                              <Icon
-                                icon="ph:warning-circle-bold"
-                                width="20"
-                                height="20"
-                                class="text-black-500"
-                              />
-                              {{ slotProps.option.alertMessage }}
-                            </div>
-                          </div>
-                          <Icon
-                            icon="ph:check-circle-fill"
-                            width="27"
-                            height="27"
-                            class="text-secondary opacity-65 item-check"
-                          />
-                        </div>
-                      </template>
-                    </Listbox>
+                      <SessionSelect
+                        :isLoading="isCurrentStepLoading"
+                        :fetchedOfferings="fetchedTermOfferings"
+                        @update:selectedSession="handleSelectedTerm"
+                        name="sessionSelect"
+                      />
+                    </div>
                   </div>
-                </div>
-              </template>
-            </StepperPanel>
-            <StepperPanel header="Lecture">
-              <template #content="{ highlighted }">
-                <div class="flex flex-column h-12rem">
-                  <div
-                    class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
-                  >
-                    Content II
+                </template>
+              </StepperPanel>
+              <StepperPanel header="Confirm Campus">
+                <template #content="{ highlighted }">
+                  <div class="flex flex-column h-12rem">
+                    <div
+                      class="flex-auto flex justify-content-center align-items-center font-medium"
+                    >
+                      <SessionSelect
+                        :isLoading="isCurrentStepLoading"
+                        :fetchedOfferings="fetchedCampusOfferings"
+                        @update:selectedSession="handleSelectedCampus"
+                        name="sessionSelect"
+                      />
+                    </div>
                   </div>
-                </div>
-              </template>
-            </StepperPanel>
-            <StepperPanel :header="subSessionType">
-              <template #content="{ nextCallback }">
-                <div class="flex flex-column h-12rem">
-                  <div
-                    class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
-                  >
-                    Content III
+                </template>
+              </StepperPanel>
+              <StepperPanel header="Lecture">
+                <template #content="{ highlighted }">
+                  <div class="flex flex-column h-12rem">
+                    <div
+                      class="flex-auto flex justify-content-center align-items-center font-medium"
+                    >
+                      <SessionSelect
+                        :isLoading="isCurrentStepLoading"
+                        :fetchedOfferings="fetchedPrimarySessionOfferings"
+                        @update:selectedSession="handleSelectedPrimarySession"
+                        name="primarySessionSelect"
+                      />
+                    </div>
                   </div>
-                </div>
-              </template>
-            </StepperPanel>
-            <StepperPanel header="Review">
-              <template>
-                <div class="flex flex-column h-12rem">
-                  <div
-                    class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
-                  >
-                    Content III
+                </template>
+              </StepperPanel>
+              <StepperPanel :header="subSessionType">
+                <template #content="{ nextCallback }">
+                  <div class="flex flex-column h-12rem">
+                    <div
+                      class="flex-auto flex justify-content-center align-items-center font-medium"
+                    >
+                      <SessionSelect
+                        :isLoading="isCurrentStepLoading"
+                        :fetchedOfferings="fetchedSubSessionOfferings"
+                        @update:selectedSession="handleSelectedSubSession"
+                        name="subSessionSelect"
+                      />
+                    </div>
                   </div>
-                </div>
-              </template>
-            </StepperPanel>
-          </Stepper>
+                </template>
+              </StepperPanel>
+              <StepperPanel header="Review">
+                <template>
+                  <div class="flex flex-column h-12rem">
+                    <div
+                      class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
+                    >
+                      Content III
+                    </div>
+                  </div>
+                </template>
+              </StepperPanel>
+            </Stepper>
+            <Button
+              class="py-3 px-6 mt-10 rounded-md md:hidden w-full justify-end"
+              @click="nextStep"
+            >
+              <div class="flex flex-row gap-2 items-center text-lg font-sans">
+                <span>{{ currentStep < totalSteps ? 'Next Step' : 'Submit' }}</span>
+                <Icon
+                  v-show="nextStepEnabled"
+                  :icon="nextStepEnabled ? 'ph:arrow-right' : 'ph:phone-call-fill'"
+                  width="25"
+                  height="25"
+                  class="text-white"
+                />
+              </div>
+            </Button>
+          </form>
         </div>
       </div>
     </LayoutPage>
@@ -378,28 +600,28 @@ onMounted(async () => {
       internalLayout="vertical"
       gap="0"
       padding="0"
-      className="justify-between"
+      className="justify-between hidden md:block"
     >
       <!-- <Video/> -->
       <!-- <BasicInfo/> -->
       <div class="flex flex-col gap-4 scale-column">
         <!-- Inject title, rating, subtitle, credit, description into BasicStat -->
         <BasicStats
-          :title="title"
+          :title="courseTitle"
           :subtitle="subtitle"
           :description="description"
           descriptionLabel="Summary"
+          :credit="undefined"
         />
         <!-- Button -->
       </div>
+      <CourseCalendar :calendarOptions="FCData" :state="isScheduleReady ? 'default' : 'loading'" />
       <div class="flex flex-row justify-end">
         <!-- disable the button  if not eligible -->
         <Button
           type="submit"
           class="py-3 px-6 mt-10 rounded-md"
           style="width: fit-content"
-          :disabled="!nextStepEnabled"
-          :loading="isNextStepLoading"
           @click="nextStep"
         >
           <div class="flex flex-row gap-2 items-center text-lg font-sans">
@@ -442,12 +664,5 @@ onMounted(async () => {
   .scale-column .stats {
     grid-template-columns: 1fr !important;
   }
-}
-
-.item-check {
-  display: none;
-}
-.p-highlight .item-check {
-  display: block;
 }
 </style>

@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<BasicStatsProps>(), {
   </div>
   <div class="subtitle font-serif text-lg text-slate-600">
     {{ subtitle }} 
-    <span v-if="credit" class="font-sans text-xl font-semibold text-primary"> • {{ credit }}</span> credit
+    <span v-if="credit" class="font-sans text-xl font-semibold text-primary"> • {{ credit }} credit</span> 
   </div>
   <Accordion :activeIndex="0" class="mt-[-20px] desc-accordion">
     <AccordionTab
