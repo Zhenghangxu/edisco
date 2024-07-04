@@ -3,23 +3,17 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import LayoutPage from './LayoutPage.vue'
 import { Icon } from '@iconify/vue/dist/iconify.js'
 import Button from 'primevue/button'
-import BasicStats from '@/components/courseDetail/BasicStats.vue'
-import EnrollmentStats from '@/components/courseDetail/EnrollmentStats.vue'
-import EligibilityDisplay from '@/components/courseDetail/EligibilityDisplay.vue'
 import type { requirementItem } from '@/components/courseDetail/EligibilityDisplay.vue'
 import SessionSelect from '@/components/signUp/SessionSelect.vue'
 import CourseCalendar from '@/components/signUp/courseCalendar.vue'
 
-import Listbox from 'primevue/listbox'
 import Stepper from 'primevue/stepper'
 import StepperPanel from 'primevue/stepperpanel'
 import { calendarPropsDefault } from '@/utils/event-utils'
-import { get } from 'http'
+import Panel from 'primevue/panel'
+import Divider from 'primevue/divider'
 
 const selectedSessions = ref(null)
-const nextButton = ref()
-const prevButton = ref(null)
-const isNextStepLoading = ref(false)
 const termCode = ref('')
 const campusCode = ref('')
 const primarySessionCode = ref('')
@@ -36,6 +30,7 @@ const totalSteps = 4
 const formRef = ref()
 const currentStep: any = ref(0)
 const isScheduleReady = ref(false)
+const isSubmitPending = ref(false);
 
 // Form Data
 // TODO: sync with reactive
@@ -82,8 +77,12 @@ watch([primarySessionCode, subSessionCode, existingSessionCodeList], (newVal) =>
   isCurrentStepLoading.value = false
 })
 
-const submitForm = (formEle, data) => {
+const submitForm = async (formEle:any, data:any) => {
+  isSubmitPending.value = true
+  // timer for 1s
+  await new Promise((resolve) => setTimeout(resolve, 1000))
   console.log('submitSuccess')
+  isSubmitPending.value = false
 }
 
 const onActiveStepChange = async (activeStep: number) => {
@@ -168,8 +167,23 @@ const nextStep = () => {
       campusCode: campusCode.value,
       primarySessionCode: primarySessionCode.value,
       subSessionCode: subSessionCode.value
-    })
+    });
   }
+}
+
+const formatTime = (sessionCode: string) => {
+  if (sessionObj.length === 0 || !sessionObj) return 'Time Not Available'
+  console.log('Session Obj', sessionObj)
+  const session = sessionObj.filter((session: any) => session.sessionID === sessionCode)[0]
+  // we also need to convert the ISO string into time format
+  // e.g. 2022-02-05T10:00:00Z => 10:00AM
+  return `${session.start.toDateString()} ${session.start.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  })} - ${session.end.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  })}`
 }
 
 const prevStep = () => {
@@ -498,7 +512,7 @@ onMounted(async () => {
               orientation="vertical"
               linear
               :activeStep="currentStep"
-              class="min-w-[64vw] md:min-w-[27rem]"
+              class="w-[90vw] md:w-[30rem]"
             >
               <StepperPanel header="Confirm Term">
                 <template #content="{ highlighted, option }">
@@ -565,38 +579,89 @@ onMounted(async () => {
                 </template>
               </StepperPanel>
               <StepperPanel header="Review">
-                <template>
-                  <div class="flex flex-column h-12rem">
-                    <div
-                      class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
-                    >
-                      Content III
+                <Panel
+                  :pt="{
+                    header: (options) => ({
+                      class: ['justify-center']
+                    })
+                  }"
+                >
+                  <template #header>
+                    <div class="flex flex-col gap-2 py-5">
+                      <div class="review-section flex flex-row gap-2">
+                        <Icon
+                          icon="ph:book-duotone"
+                          width="35"
+                          height="35"
+                          class="text-secondary"
+                        />
+                        <div>
+                          <h5 class="m-0 text-lg">Course</h5>
+                          <p class="m-0">{{ courseTitle }}: {{ subtitle }}</p>
+                          <Divider />
+                        </div>
+                      </div>
+                      <div class="review-section flex flex-row gap-2">
+                        <Icon
+                          icon="ph:clock-duotone"
+                          width="35"
+                          height="35"
+                          class="text-secondary"
+                        />
+                        <div>
+                          <h5 class="m-0 text-lg">Time</h5>
+                          <p class="m-0">Lecture: {{ subtitle }}</p>
+                          <p class="m-0">{{ subSessionType }}: time</p>
+                          <Divider />
+                        </div>
+                      </div>
+                      <div class="review-section flex flex-row gap-2">
+                        <Icon
+                          icon="ph:map-pin-duotone"
+                          width="35"
+                          height="35"
+                          class="text-secondary"
+                        />
+                        <div>
+                          <h5 class="m-0 text-lg">Campus</h5>
+                          <p class="m-0" v-if="campusCode">{{ campusCode }}</p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </template>
+                  </template>
+                </Panel>
+                <div class="md:hidden">
+                  <CourseCalendar
+                    :calendarOptions="FCData"
+                    :state="isScheduleReady ? 'default' : 'loading'"
+                  />
+                </div>
               </StepperPanel>
             </Stepper>
-            <Button
-              class="py-3 px-6 mt-10 rounded-md md:hidden w-full justify-end"
-              @click="nextStep"
-            >
-              <div class="flex flex-row gap-2 items-center text-lg font-sans">
-                <span>{{ currentStep < totalSteps ? 'Next Step' : 'Submit' }}</span>
-                <Icon
-                  v-show="nextStepEnabled"
-                  :icon="nextStepEnabled ? 'ph:arrow-right' : 'ph:phone-call-fill'"
-                  width="25"
-                  height="25"
-                  class="text-white"
-                />
-              </div>
-            </Button>
+            <div class="flex flex-row w-full justify-end ">
+              <Button
+                class="py-3 px-6 mt-10 rounded-md md:hidden w-[200px] justify-center"
+                @click="nextStep"
+                :loading="isSubmitPending"
+              >
+                <div class="flex flex-row gap-2 items-center text-lg font-sans">
+                  <span>{{ currentStep < totalSteps ? 'Next Step' : 'Submit' }}</span>
+                  <Icon
+                    v-show="nextStepEnabled"
+                    :icon="nextStepEnabled ? 'ph:arrow-right' : 'ph:phone-call-fill'"
+                    width="25"
+                    height="25"
+                    class="text-white"
+                  />
+                </div>
+              </Button>
+            </div>
           </form>
         </div>
       </div>
     </LayoutPage>
     <LayoutPage
-      type="side"
+      type="third"
       internalLayout="vertical"
       gap="0"
       padding="0"
@@ -606,13 +671,14 @@ onMounted(async () => {
       <!-- <BasicInfo/> -->
       <div class="flex flex-col gap-4 scale-column">
         <!-- Inject title, rating, subtitle, credit, description into BasicStat -->
-        <BasicStats
-          :title="courseTitle"
-          :subtitle="subtitle"
-          :description="description"
-          descriptionLabel="Summary"
-          :credit="undefined"
-        />
+        <div>
+          <span class="title font-serif text-2xl font-bold text-slate-800">{{ courseTitle }}</span>
+          :
+          <span class="subtitle font-sans text-xl text-slate-600">
+            {{ subtitle }}
+          </span>
+        </div>
+
         <!-- Button -->
       </div>
       <CourseCalendar :calendarOptions="FCData" :state="isScheduleReady ? 'default' : 'loading'" />
@@ -622,6 +688,7 @@ onMounted(async () => {
           type="submit"
           class="py-3 px-6 mt-10 rounded-md"
           style="width: fit-content"
+          :loading="isSubmitPending"
           @click="nextStep"
         >
           <div class="flex flex-row gap-2 items-center text-lg font-sans">

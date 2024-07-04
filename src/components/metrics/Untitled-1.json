@@ -1,0 +1,38 @@
+{
+	"page_name": "Add-On",
+	"header": "Please select optional additional services.",
+	"subHeader": "For a low monthly fee, you can conveniently add any of these services to your Direct Energy Bill. There is no long-term contract, and you may cancel at any time with no penalty.",
+	"view_features": "View Features",
+	"view_benefits": "View Benefits",
+	"select_offer": "Select Offer",
+	"view_features_subheader": "see why you should get this",
+	"checkbox_text": "Add {{name}} for {{price}} per month",
+	"service-card": {
+		"header": "Direct Energy $1,000-Surge Protect",
+		"plan": "Most Popular",
+		"desc": "Get up to $1,000 of protection in the event of unexpected damage from an electrical surge or lightning strike. <a href=''>Terms of Service</a>",
+		"features": {
+			"feature1": "Coverage up to $1,000 per year, after the standard 30-day waiting period.",
+			"feature2": "Cancel at any time with no penalty and no long-term contract.",
+			"feature3": "No preinspection required and no service call fee."
+		},
+		"checkbox-text": "Add Direct Energy $1,000 Surge Protect for $6.99 per month"
+	},
+    "homeProfile":{
+        "cardHeader": "Your Home Profile",
+        "TypeApartment": "Apartment",
+        "TypeHouse": "House",
+        "AddressLabel": "Address",
+        "CentralACLable": "Central AC",
+        "Affirmative": "Yes",
+        "Negative": "No",
+        "PoolLabel": "Pool",
+        "ResidenceTypeLabel": "Residence Type",
+        "YearBuiltLabel": "Year Built",
+        "SizeLabel": "Size",
+        "Footer": {
+            "Reminder":"Source: Public Records",
+            "Tooltip":"This information is sourced from public records and may not be accurate."
+        }
+    }
+}

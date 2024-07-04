@@ -152,7 +152,6 @@ b {
 
 .edisco-calendar {
   display: flex;
-  min-height: 100%;
   font-size: 14px;
   @apply font-sans;
 }

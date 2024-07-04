@@ -21,6 +21,7 @@ export const calendarPropsDefault: CalendarOptions = {
   slotMinTime: '08:00:00',
   slotMaxTime: '22:00:00',
   slotDuration: '01:00:00',
+  height: 'auto',
   initialView: 'timeGridWeek',
   allDaySlot: false,
   timeZone: 'EST',

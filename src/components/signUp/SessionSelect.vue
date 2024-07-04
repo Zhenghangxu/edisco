@@ -66,6 +66,7 @@ watch(selectedSession, (newVal) => {
             :image="slotProps.option.avatar"
             shape="circle"
             size="large"
+            class="max-w-[60px] h-auto"
           />
           <div class="flex flex-col align-items-center gap-3">
             <div class="text-xl font-serif font-semibold text-slate-800">

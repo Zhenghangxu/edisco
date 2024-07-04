@@ -20,7 +20,7 @@ defineProps<{
       className="items-stretch flex-nowrap justify-center gap-8 lg:gap-[30px] lg:flex-row sm:items-center p-2 sm:p-0 my-8 md:my-[120px]"
     >
       <LayoutPage
-        type="half"
+        type="half" 
         internalLayout="vertical"
         gap="0"
         padding="0"
@@ -34,9 +34,9 @@ defineProps<{
             padding="0"
             className="max-w-[95vw] md:max-w-[900px]"
           >
-            <h3 class="sub-heading">Tell Us What You Like</h3>
+            <h3 class="sub-heading text-2xl text-center font-serif">Tell Us What You Like</h3>
             <InterestSelect></InterestSelect>
-            <div class="flex flex-row">
+            <div class="flex flex-row mt-4 md:mt-[100px]">
               <Button
                 label="Continue"
                 type="submit"

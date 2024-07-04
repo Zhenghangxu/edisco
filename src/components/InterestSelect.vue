@@ -9,7 +9,7 @@ const options = ref(subjectAssetMapping)
 </script>
 
 <template>
-  <div class="card flex justify-content-center items-center">
+  <div class="card flex justify-content-center items-center select-interest-widget">
     <SelectButton
       v-model="value"
       :options="options"
@@ -36,3 +36,9 @@ const options = ref(subjectAssetMapping)
     </SelectButton>
   </div>
 </template>
+
+<style global>
+.select-interest-widget .p-selectbutton .p-button.p-highlight::before {
+  background: transparent;
+}
+</style>
